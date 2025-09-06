@@ -2018,4 +2018,4 @@ Create a virtual environment:
 - `git push origin <branch_name>` # Push changes to remote repo
 - `git push -u origin <branch_name>` # Push and set upstream tracking
 
-Note: The remaining content of the PDF is truncated in the available data. If you have the full PDF, please provide it for complete conversion. This Markdown covers pages 1-50 based on the extracted text.
+Note: The remaining content will be added later.
