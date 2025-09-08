@@ -187,6 +187,3 @@ aws dynamodb create-table \
 
 ⚡ **Tip:** ScyllaDB is fully Cassandra-compatible, but 10x faster due to its C++ core. Use `cqlsh` for CQL queries, `nodetool` for ops, and `alternator` for DynamoDB workloads.
 
----
-
-Would you like me to make this cheatsheet into a **one-page PDF quick reference** (good for printing) or keep it as text only?
