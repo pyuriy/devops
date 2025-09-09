@@ -25,10 +25,9 @@ Before proceeding, create a backup of critical data:
 
 **Pro Tip**: Compare pre- and post-upgrade configs with a script like `compare_etc_after_os_patching.pl` to spot changes.
 
-#### 3. Fix Symlinks and SELinux
-Ensure system stability by addressing symlinks and SELinux settings:
-- Fix symlinks: `ln -snf storage_big /storage`.
+#### 3.  SELinux
 - Set SELinux to permissive: Edit `/etc/selinux/config` to `SELINUX=permissive` and confirm with `getenforce`.
+- set it to disable is the best to make the upgrdae proccess quicker
 
 #### 4. Register the Correct Subscription
 Clean and re-register your subscription to align with RHEL 8:
@@ -37,7 +36,7 @@ subscription-manager remove --all
 subscription-manager unregister
 subscription-manager clean
 yum clean all
-subscription-manager register --org="IaaS_Org" --activationkey="leapp_rhel7_8"
+subscription-manager register --org="Your_Org" --activationkey="leapp_rhel7_8"
 subscription-manager refresh
 ```
 Ensure only `redhat.repo` is active post-registration.
@@ -58,10 +57,11 @@ Even with preparation, upgrades can hit snags. Here’s how to tackle them:
 After rebooting, update to the latest RHEL 8:
 - Re-register: `subscription-manager register --org="IaaS_Org" --activationkey="iaas-rhel8"`.
 - Update: `yum -y update`.
-- Apply security fixes (e.g., SSH hardening per DMT-2554) and mark vulnerabilities resolved in your ops center.
+- Apply security fixes (e.g., SSH hardening, etc)
 
 This process has streamlined upgrades in my production environments, turning potential headaches into successes. Test in a staging setup first, and consider automating with Ansible for consistency.
 
-Have you faced unique challenges during a RHEL upgrade? Share your experiences or questions below—I’d love to connect and help! Like, share, or follow for more IT insights.
+Have you faced unique challenges during a RHEL upgrade? Share your experiences or questions below.
+I’d love to connect and help! Like, share, or follow for more IT insights.
 
 #RHEL #LinuxAdmin #SysAdmin #DevOps #Leapp #UpgradeGuide #ITOperations #RedHat
