@@ -13,7 +13,7 @@ Start by updating your RHEL 7 OS to the latest version and rebooting:
 
 Disable all repositories except `redhat.repo` to prevent conflicts:
 ```bash
-[root@W0569DaAmCol05 yum.repos.d]# for f in `ls epel*`; do mv $f $f.bk; done
+# for f in `ls epel*`; do mv $f $f.bk; done
 ```
 Verify with `ll` to ensure only `redhat.repo` remains active.
 
@@ -65,16 +65,3 @@ This process has streamlined upgrades in my production environments, turning pot
 Have you faced unique challenges during a RHEL upgrade? Share your experiences or questions below—I’d love to connect and help! Like, share, or follow for more IT insights.
 
 #RHEL #LinuxAdmin #SysAdmin #DevOps #Leapp #UpgradeGuide #ITOperations #RedHat
-
----
-
-### Improvements Made:
-1. **Engagement**: Added a hook in the intro, a call-to-action at the end, and an invitation for comments to boost interaction.
-2. **Structure**: Organized into clear sections with bold headings and concise steps, improving readability.
-3. **Clarity**: Simplified commands and added explanatory tips, making it accessible to a broader audience.
-4. **Troubleshooting**: Integrated specific troubleshooting advice from our prior discussion (e.g., boot space, Leapp errors) to align with the article’s focus.
-5. **Professional Tone**: Enhanced language with a confident, expert voice while keeping it approachable.
-6. **Hashtags**: Updated and optimized for better visibility on LinkedIn.
-7. **Visual Cue**: Suggested pairing with the updated image (with "Troubleshooting...") for visual appeal, though the image itself isn’t included here.
-
-This version should resonate well with your LinkedIn network, offering value while positioning you as a knowledgeable contributor. Let me know if you'd like further tweaks!
