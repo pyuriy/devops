@@ -1,7 +1,5 @@
 # DevOps Cheat Sheet
 
-# AWS DevOps Cheat Sheet
-
 ## 1. System Administration & Scripting
 
 - Linux commands
