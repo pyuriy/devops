@@ -293,4 +293,4 @@ predictions.select("SalesAmount", "prediction").show()
 | Databricks: Getting Started with Spark | Free community edition for notebooks and ML. | [Databricks](https://www.databricks.com/spark/getting-started-with-apache-spark) |
 | ProjectPro: Top Hadoop Projects | 20+ source code projects for portfolios. | [ProjectPro](https://www.projectpro.io/article/learn-to-build-big-data-apps-by-working-on-hadoop-projects/344) |
 
-Practice these labs iteratively, experiment with larger datasets (e.g., from Kaggle), and track your progress. For certifications, try Spark MCQ tests. If stuck, check Stack Overflow or Reddit's r/dataengineering. Happy coding!
+Practice these labs iteratively, experiment with larger datasets (e.g., from Kaggle), and track your progress. For certifications, try Spark MCQ tests. If stuck, check Stack Overflow or Reddit's r/dataengineering.
