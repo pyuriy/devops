@@ -1,20 +1,20 @@
-Hadoop Java Cheat Sheet
+# Hadoop Java Cheat Sheet
+
 This cheat sheet covers key concepts, APIs, and code snippets for working with Hadoop using Java, focusing on HDFS, MapReduce, and common configurations.
-1. Hadoop Core Concepts
 
-HDFS: Hadoop Distributed File System, for storing large datasets.
-MapReduce: Distributed data processing framework.
-YARN: Resource management and job scheduling.
-Key Classes:
-Configuration: Manages Hadoop configurations.
-FileSystem: Interacts with HDFS.
-Job: Configures and submits MapReduce jobs.
-Mapper and Reducer: Core classes for MapReduce logic.
+## 1. Hadoop Core Concepts
+- **HDFS**: Hadoop Distributed File System, for storing large datasets.
+- **MapReduce**: Distributed data processing framework.
+- **YARN**: Resource management and job scheduling.
+- **Key Classes**:
+  - `Configuration`: Manages Hadoop configurations.
+  - `FileSystem`: Interacts with HDFS.
+  - `Job`: Configures and submits MapReduce jobs.
+  - `Mapper` and `Reducer`: Core classes for MapReduce logic.
 
-
-
-2. Setting Up Hadoop Environment
-Maven Dependencies
+## 2. Setting Up Hadoop Environment
+### Maven Dependencies
+```xml
 <dependencies>
     <dependency>
         <groupId>org.apache.hadoop</groupId>
@@ -27,17 +27,21 @@ Maven Dependencies
         <version>3.3.6</version>
     </dependency>
 </dependencies>
+```
 
-Basic Configuration
+### Basic Configuration
+```java
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 
 Configuration conf = new Configuration();
 conf.set("fs.defaultFS", "hdfs://localhost:9000"); // Set HDFS URI
 FileSystem fs = FileSystem.get(conf);
+```
 
-3. HDFS Operations
-Reading a File
+## 3. HDFS Operations
+### Reading a File
+```java
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.fs.FSDataInputStream;
 
@@ -49,28 +53,36 @@ while ((line = reader.readLine()) != null) {
     System.out.println(line);
 }
 reader.close();
+```
 
-Writing a File
+### Writing a File
+```java
 import org.apache.hadoop.fs.FSDataOutputStream;
 
 Path path = new Path("/path/to/output.txt");
 FSDataOutputStream out = fs.create(path);
 out.writeBytes("Hello, Hadoop!".getBytes());
 out.close();
+```
 
-Listing Files
+### Listing Files
+```java
 import org.apache.hadoop.fs.FileStatus;
 
 FileStatus[] status = fs.listStatus(new Path("/path/to/dir"));
 for (FileStatus file : status) {
     System.out.println(file.getPath().getName());
 }
+```
 
-Deleting a File/Directory
+### Deleting a File/Directory
+```java
 fs.delete(new Path("/path/to/file.txt"), true); // true for recursive delete
+```
 
-4. MapReduce Programming
-Basic MapReduce Job Structure
+## 4. MapReduce Programming
+### Basic MapReduce Job Structure
+```java
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
@@ -127,29 +139,34 @@ public class WordCount {
         System.exit(job.waitForCompletion(true) ? 0 : 1);
     }
 }
+```
 
-Common MapReduce Configurations
+### Common MapReduce Configurations
+```java
 job.setNumReduceTasks(2); // Set number of reducers
 job.setInputFormatClass(TextInputFormat.class); // Input format
 job.setOutputFormatClass(TextOutputFormat.class); // Output format
 job.setMapOutputKeyClass(Text.class); // Mapper output key type
 job.setMapOutputValueClass(IntWritable.class); // Mapper output value type
+```
 
-5. Common Writable Types
+## 5. Common Writable Types
+- `Text`: String equivalent.
+- `IntWritable`: Integer equivalent.
+- `LongWritable`: Long equivalent.
+- `FloatWritable`: Float equivalent.
+- `DoubleWritable`: Double equivalent.
+- `NullWritable`: Placeholder for null values.
 
-Text: String equivalent.
-IntWritable: Integer equivalent.
-LongWritable: Long equivalent.
-FloatWritable: Float equivalent.
-DoubleWritable: Double equivalent.
-NullWritable: Placeholder for null values.
-
-6. Combiner
+## 6. Combiner
 A combiner reduces intermediate data before sending to the reducer.
+```java
 job.setCombinerClass(WordCountReducer.class); // Use reducer as combiner
+```
 
-7. Partitioner
+## 7. Partitioner
 Controls how map output is distributed to reducers.
+```java
 public class CustomPartitioner extends Partitioner<Text, IntWritable> {
     @Override
     public int getPartition(Text key, IntWritable value, int numPartitions) {
@@ -157,8 +174,10 @@ public class CustomPartitioner extends Partitioner<Text, IntWritable> {
     }
 }
 job.setPartitionerClass(CustomPartitioner.class);
+```
 
-8. Chaining MapReduce Jobs
+## 8. Chaining MapReduce Jobs
+```java
 Job job1 = Job.getInstance(conf, "Job1");
 // Configure job1
 job1.waitForCompletion(true);
@@ -166,27 +185,28 @@ job1.waitForCompletion(true);
 Job job2 = Job.getInstance(conf, "Job2");
 // Configure job2
 job2.waitForCompletion(true);
+```
 
-9. Debugging Tips
+## 9. Debugging Tips
+- Check logs in Hadoop’s web UI (default: `http://localhost:9870` for HDFS, `http://localhost:8088` for YARN).
+- Use `context.write` sparingly to avoid excessive I/O.
+- Test locally with small datasets before running on a cluster.
 
-Check logs in Hadoop’s web UI (default: http://localhost:9870 for HDFS, http://localhost:8088 for YARN).
-Use context.write sparingly to avoid excessive I/O.
-Test locally with small datasets before running on a cluster.
+## 10. Common Exceptions
+- **IOException**: Check HDFS connectivity and permissions.
+- **ClassNotFoundException**: Ensure `job.setJarByClass` is set correctly.
+- **IllegalArgumentException**: Verify input/output paths exist.
 
-10. Common Exceptions
+## 11. Best Practices
+- Use combiners to reduce network shuffle.
+- Set appropriate number of reducers based on data size.
+- Avoid complex logic in mappers/reducers for better performance.
+- Use counters for debugging:
+  ```java
+  context.getCounter("MyGroup", "MyCounter").increment(1);
+  ```
 
-IOException: Check HDFS connectivity and permissions.
-ClassNotFoundException: Ensure job.setJarByClass is set correctly.
-IllegalArgumentException: Verify input/output paths exist.
-
-11. Best Practices
-
-Use combiners to reduce network shuffle.
-Set appropriate number of reducers based on data size.
-Avoid complex logic in mappers/reducers for better performance.
-Use counters for debugging:context.getCounter("MyGroup", "MyCounter").increment(1);
-
-
-
-12. Running a Job
+## 12. Running a Job
+```bash
 hadoop jar myapp.jar WordCount /input /output
+```
