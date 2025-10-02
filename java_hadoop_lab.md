@@ -18,6 +18,7 @@ To run Hadoop MapReduce jobs, you need a Java Development Kit (JDK 8 or 11) and 
 
 2. **Install Hadoop**:
    - Download the latest stable Hadoop (e.g., 3.4.0) from the Apache Hadoop website.
+https://www.apache.org/dyn/closer.cgi/hadoop/common/hadoop-3.4.0/hadoop-3.4.0.tar.gz
    - Extract to a directory, e.g., `/opt/hadoop`.
    - Set environment variables in `~/.bashrc`:
      ```
