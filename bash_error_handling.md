@@ -1,6 +1,12 @@
 ### Error Handling in Linux Bash Scripting
 
-Error handling in Bash scripts is crucial for making scripts robust, especially in production environments where failures (e.g., network issues, missing files, or command failures) can occur. The snippet you provided outlines a common, idiomatic approach to strict error handling, particularly useful for scripts involving external commands like `ssh`. I'll break it down step by step, explain what each part does, why it's useful, and how it fits together.
+Error handling in Bash scripts is crucial for making scripts robust, especially in production environments where failures (e.g., network issues, missing files, or command failures) can occur. 
+The snippet:
+```
+Error-handling: set -euo pipefail at top; trap errors trap 'echo "Error on line $LINENO"' ERR; check SSH exit codes if ! ssh ...; then echo "SSH failed"; exit 1; fi.
+```
+
+outlines a common, idiomatic approach to strict error handling, particularly useful for scripts involving external commands like `ssh`. I'll break it down step by step, explain what each part does, why it's useful, and how it fits together.
 
 #### 1. `set -euo pipefail` (at the top of the script)
 This is a "strict mode" declaration placed near the beginning of your script (right after `#!/bin/bash`). It enables several Bash options to catch errors early and prevent silent failures. You can set it with a single command:
