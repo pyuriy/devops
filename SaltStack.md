@@ -37,3 +37,5 @@ For Salt API:
     salt-call sys.list_modules --out=json  # Listing modules
     salt-call sys.list_state_modules       # Listing states
 
+## Note
+Nice introduction video [intro](https://www.youtube.com/watch?v=EiQty-dVfqY)
