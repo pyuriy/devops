@@ -181,7 +181,7 @@ This lab gets you productive—experiment and break things!
 
 # SaltStack Lab Resources
 
-This Markdown file compiles all webpages mentioned in the Comprehensive SaltStack Lab Guide, with a short description for each. These resources provide installation guides, tutorials, videos, and community tools to support your SaltStack learning journey.
+The follwoing resources provide installation guides, tutorials, videos, and community tools to support your SaltStack learning journey.
 
 ## Installation and Setup
 - **[Docker Installation Docs](https://docs.docker.com/install/)**: Official guide for installing Docker and Docker Compose on various platforms, essential for the lab's containerized environment.
