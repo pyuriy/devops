@@ -177,4 +177,20 @@ States (SLS files in YAML) define "desired state" (e.g., install packages, manag
 - Video: [Zero to Hero on YouTube](https://www.youtube.com/watch?v=EiQty-dVfqY).
 - Awesome List: GitHub's [awesome-saltproject](https://github.com/saltstack/awesome-saltproject) for more formulas and tools.
 
-This lab gets you productive—experiment and break things! If stuck, share error logs. What's your setup goal (e.g., cloud infra)?
+This lab gets you productive—experiment and break things!
+
+# SaltStack Lab Resources
+
+This Markdown file compiles all webpages mentioned in the Comprehensive SaltStack Lab Guide, with a short description for each. These resources provide installation guides, tutorials, videos, and community tools to support your SaltStack learning journey.
+
+## Installation and Setup
+- **[Docker Installation Docs](https://docs.docker.com/install/)**: Official guide for installing Docker and Docker Compose on various platforms, essential for the lab's containerized environment.
+- **[Docker SaltStack GitHub Repo](https://github.com/cyface/docker-saltstack.git)**: Pre-built Docker Compose setup for Salt master and minions, used to quickly spin up the lab environment.
+
+## Tutorials and Documentation
+- **[Salt in 10 Minutes Tutorial](https://docs.saltproject.io/en/3007/topics/tutorials/walkthrough.html)**: Quick-start walkthrough from the Salt Project docs, covering basic installation and first commands.
+- **[Salt Project User Guide](https://docs.saltproject.io)**: Comprehensive official documentation for SaltStack, including modules, states, and advanced features.
+
+## Videos and Community Resources
+- **[Zero to Hero SaltStack Video](https://www.youtube.com/watch?v=EiQty-dVfqY)**: YouTube tutorial series taking you from beginner to advanced SaltStack concepts with practical demos.
+- **[Awesome SaltProject GitHub List](https://github.com/saltstack/awesome-saltproject)**: Curated collection of Salt formulas, tools, and integrations for extending your automation workflows.
