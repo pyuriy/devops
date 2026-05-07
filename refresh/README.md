@@ -4,7 +4,7 @@ DevOps is an approach to software development that combines development (Develop
 
 ---
 
-## Linux
+## (Linux)[Linux]
 *   **Refresh your knowledge** of Unix-like system administration by installing custom services and deploying Redis, Nginx, RabbitMQ, PostgreSQL, MySQL, WireGuard VPN, etc.
 *   **Learn to write automation** in Bash and utilize Docker.
 
