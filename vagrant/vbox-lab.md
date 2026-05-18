@@ -297,6 +297,59 @@ This lab provides hands-on exercises to master Vagrant using Oracle VirtualBox a
 - **Full Cleanup:** `vagrant global-status` to list all, then `vagrant destroy -f <id>`. Prune boxes: `vagrant box prune`.
 - **Performance:** Allocate 4GB+ host RAM for multi-VM. Use SSD for boxes.
 - **Security:** Change default SSH key: `config.ssh.insert_key = false`. Use firewalls in provisioners.
+
+## Troubleshoting 
+
+```bash
+> vagrant up
+The VirtualBox VM was created with a user that doesn't match the
+current user running Vagrant. VirtualBox requires that the same user
+be used to manage the VM that was created. Please re-run Vagrant with
+that user. This is not a Vagrant issue.
+The UID used to create the VM was: 1000
+Your UID is: 501
+>
+```
+
+**This is a common issue** when moving Vagrant projects between machines (especially Linux → macOS) or after restoring from backup. VirtualBox ties VMs to the UID of the user who created them.
+
+### Quickest Fix (Recommended)
+
+1. Go to your project directory (where the `Vagrantfile` is).
+2. Edit this file:  
+   **`.vagrant/machines/default/virtualbox/creator_uid`**
+3. Change the content from `1000` to `501` (your current UID).
+4. Save and try `vagrant up` again.
+
+This tells Vagrant "yes, this is now my VM."
+
+### Safer / Cleaner Alternatives
+
+**Option 1: Destroy and recreate (cleanest)**
+```bash
+vagrant destroy
+vagrant up
+```
+This removes the old VM and creates a fresh one under your current user.
+
+**Option 2: If `vagrant destroy` also fails**
+- Open **VirtualBox GUI** → right-click the VM → Remove → "Delete all files" (or just unregister if you want to keep disks).
+- Then run `vagrant up`.
+
+**Option 3: Run as the original user (less common on macOS)**
+If you know the user with UID 1000 still exists:
+```bash
+sudo -u #1000 vagrant up
+```
+(but this is usually not practical).
+
+### Why this happens
+- UID 1000 → typical first user on Linux
+- UID 501 → typical first user on macOS
+
+Your project was likely created on a Linux machine or by another user.
+
+Try the **creator_uid** edit first — it solves it for most people quickly. Let me know if you get another error after that!
 - **Debugging:** `VAGRANT_LOG=debug vagrant up > log.txt 2>&1`.
 - **Next Steps:** Explore cloud providers (vagrant-aws plugin) or Kubernetes integration.
 
