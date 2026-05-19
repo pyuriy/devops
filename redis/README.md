@@ -156,3 +156,69 @@ vagrant reload --provision
 - Ports forwarded for easy testing from your laptop
 
 ---
+
+
+## What does "**The nodes must be started and managed using custom systemd units (services)**" mean?
+
+It means that **each Redis node** (whether in Cluster or Sentinel mode) must run as a **separate, independent systemd service** on the Linux system — not just started manually with `redis-server` command or all together under one service.
+
+### In Simple Terms:
+
+Instead of doing this (not desired):
+```bash
+redis-server /path/to/config1.conf     # manual, not managed
+redis-server /path/to/config2.conf     # manual
+```
+
+You must do this (required):
+
+- Create **individual systemd unit files** like:
+  - `redis-7000.service`
+  - `redis-7001.service`
+  - `redis-7002.service`
+  - etc.
+
+- Then manage them using standard systemctl commands:
+  ```bash
+  sudo systemctl start redis-7000
+  sudo systemctl stop redis-7001
+  sudo systemctl restart redis-7000
+  sudo systemctl status redis-7002
+  sudo systemctl enable redis-7000     # start automatically after reboot
+  ```
+
+### Why This Requirement?
+
+This is considered a **best practice** in DevOps / production environments because:
+
+| Benefit                        | Description |
+|--------------------------------|-----------|
+| **Proper Service Management**  | Systemd handles starting, stopping, restarting, and monitoring |
+| **Automatic Restart**          | If a node crashes, systemd restarts it automatically |
+| **Logging**                    | Logs go to journalctl (`journalctl -u redis-7000 -f`) |
+| **Resource Limits**            | Easy to set CPU, memory, file descriptors limits |
+| **Dependency Management**      | Can define startup order |
+| **Standard Linux Way**         | Matches how real services (nginx, mysql, etc.) are managed |
+| **Observability**              | Easy to monitor individual nodes |
+
+### What a Custom Systemd Unit Looks Like
+
+```ini
+[Unit]
+Description=Redis Cluster Node on port 7000
+After=network.target
+
+[Service]
+Type=notify
+User=redis
+Group=redis
+ExecStart=/usr/bin/redis-server /etc/redis/cluster/7000/redis_7000.conf --supervised systemd
+ExecStop=/usr/bin/redis-cli -h 127.0.0.1 -p 7000 shutdown
+Restart=always
+LimitNOFILE=65535
+
+[Install]
+WantedBy=multi-user.target
+```
+
+This is what was implemented in the previous Vagrantfiles — each node gets its own `.service` file.
