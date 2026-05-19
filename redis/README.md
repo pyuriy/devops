@@ -222,3 +222,139 @@ WantedBy=multi-user.target
 ```
 
 This is what was implemented in the previous Vagrantfiles — each node gets its own `.service` file.
+
+## Testing it works fine
+
+**✅ How to Test Your Redis Cluster Setup (on the Vagrant VM)**
+
+Here’s a complete testing checklist — from basic to advanced — to verify that your Redis Cluster is working correctly.
+
+### 1. Connect to the VM and Run Basic Checks
+
+```bash
+vagrant ssh
+```
+
+### 2. Check Systemd Services (Most Important)
+
+```bash
+# Check all 6 services
+sudo systemctl status redis-70* --no-pager
+
+# Or check one by one
+sudo systemctl status redis-7000 redis-7001 redis-7002
+```
+
+**Expected**: All services should be `active (running)`.
+
+### 3. Basic Connectivity Test
+
+```bash
+# Test each node
+for port in {7000..7005}; do
+  echo -n "Port $port: "
+  redis-cli -p $port ping
+done
+```
+
+**Expected**: All should return `PONG`.
+
+### 4. Cluster Health Verification (Key Commands)
+
+Run these commands:
+
+```bash
+# 1. Cluster nodes (topology)
+redis-cli -p 7000 cluster nodes
+
+# 2. Cluster state summary
+redis-cli -p 7000 cluster info
+
+# 3. Best overall health check
+redis-cli --cluster check 127.0.0.1:7000
+```
+
+**What to look for**:
+- `cluster_state:ok`
+- `cluster_slots_assigned:16384` and `cluster_slots_ok:16384`
+- 3 masters + 3 replicas
+- No `fail` or `pfail` flags on nodes
+
+### 5. Data Write & Read Test (with Cluster Mode)
+
+```bash
+# Set keys that will go to different nodes
+redis-cli -p 7000 -c SET name "Yuriy"
+redis-cli -p 7000 -c SET city "Toronto"
+redis-cli -p 7000 -c SET counter 100
+
+# Read them back
+redis-cli -p 7000 -c GET name
+redis-cli -p 7000 -c GET city
+redis-cli -p 7000 -c INCR counter
+```
+
+The `-c` flag enables **cluster mode** (follows redirections automatically).
+
+### 6. Advanced Validation Commands
+
+```bash
+# Check slot distribution
+redis-cli -p 7000 cluster slots | head -n 20
+
+# Info from all nodes at once
+redis-cli --cluster call 127.0.0.1:7000 info | grep -E "cluster|role|connected"
+
+# Memory and performance stats
+redis-cli -p 7000 info memory
+redis-cli -p 7000 info stats
+```
+
+### 7. Test Failover (Optional but Recommended)
+
+Simulate a master failure:
+
+```bash
+# Find a master node
+redis-cli -p 7000 cluster nodes | grep master
+
+# Stop one master (example: 7000)
+sudo systemctl stop redis-7000
+
+# Wait 10-15 seconds and check cluster again
+redis-cli -p 7001 cluster nodes
+
+# Restart it
+sudo systemctl start redis-7000
+```
+
+A replica should be promoted to master automatically.
+
+### 8. Quick One-Liner Health Check Script
+
+You can create this helper script:
+
+```bash
+cat > ~/check-redis-cluster.sh <<'EOF'
+#!/bin/bash
+echo "=== Redis Cluster Health Check ==="
+redis-cli -p 7000 cluster info | grep -E "cluster_state|cluster_slots|cluster_known_nodes"
+echo "Nodes:"
+redis-cli -p 7000 cluster nodes | wc -l
+echo "Check:"
+redis-cli --cluster check 127.0.0.1:7000 | tail -n 5
+EOF
+
+chmod +x ~/check-redis-cluster.sh
+~/check-redis-cluster.sh
+```
+
+---
+
+**All Good If You See**:
+- All 6 services running
+- `PONG` from all nodes
+- `cluster_state:ok`
+- 16384 slots assigned
+- 3 masters + 3 replicas
+- Able to read/write with `-c` flag
