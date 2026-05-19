@@ -1,0 +1,118 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "ubuntu/jammy64"
+  config.vm.box_download_insecure = true
+  config.vm.hostname = "redis-cluster"
+
+  config.vm.provider "virtualbox" do |vb|
+    vb.name = "redis-cluster-vm"
+    vb.memory = "4096"      # 4GB strongly recommended
+    vb.cpus = 4
+    vb.gui = false
+  end
+
+  # Forward ports for easy access from host (optional)
+  (0..5).each do |i|
+    port = 7000 + i
+    config.vm.network "forwarded_port", guest: port, host: port, host_ip: "127.0.0.1"
+  end
+
+  # Fully Automated Provisioning
+  config.vm.provision "shell", inline: <<-SHELL
+    echo "========================================"
+    echo "🚀 Redis Cluster Automated Setup (6 nodes)"
+    echo "========================================"
+
+    apt-get update -qq
+    apt-get install -y redis-server redis-tools
+
+    # Prepare user and directories
+    id -u redis &>/dev/null || useradd -r -s /bin/false redis
+    mkdir -p /etc/redis/cluster /var/lib/redis /var/log/redis
+    chown -R redis:redis /var/lib/redis /var/log/redis /etc/redis
+    chmod 755 /var/lib/redis /var/log/redis
+
+    # ====================== Create 6 Redis Nodes ======================
+    for i in {0..5}; do
+      port=$((7000 + i))
+      node_dir="/etc/redis/cluster/${port}"
+
+      mkdir -p "${node_dir}" "/var/lib/redis/${port}"
+
+      cat > "${node_dir}/redis_${port}.conf" <<EOF
+port ${port}
+bind 0.0.0.0
+protected-mode no
+dir /var/lib/redis/${port}
+pidfile /var/run/redis/redis_${port}.pid
+logfile /var/log/redis/redis_${port}.log
+loglevel notice
+daemonize no
+appendonly no
+
+# Cluster Configuration
+cluster-enabled yes
+cluster-node-timeout 5000
+cluster-config-file nodes-${port}.conf
+cluster-require-full-coverage no
+EOF
+
+      chown -R redis:redis "${node_dir}" "/var/lib/redis/${port}"
+      chmod 644 "${node_dir}/redis_${port}.conf"
+    done
+
+    # ====================== Systemd Services ======================
+    for i in {0..5}; do
+      port=$((7000 + i))
+
+      cat > /etc/systemd/system/redis-${port}.service <<EOL
+[Unit]
+Description=Redis Cluster Node ${port}
+After=network.target
+
+[Service]
+Type=notify
+User=redis
+Group=redis
+ExecStart=/usr/bin/redis-server /etc/redis/cluster/${port}/redis_${port}.conf --supervised systemd
+ExecStop=/usr/bin/redis-cli -h 127.0.0.1 -p ${port} shutdown
+Restart=always
+RestartSec=5
+LimitNOFILE=65535
+RuntimeDirectory=redis
+
+[Install]
+WantedBy=multi-user.target
+EOL
+    done
+
+    # Reload systemd
+    systemctl daemon-reload
+
+    # Enable and start all 6 nodes
+    for i in {0..5}; do
+      port=$((7000 + i))
+      systemctl enable --now redis-${port}
+    done
+
+    echo "✅ All Redis nodes started."
+
+    # ====================== Initialize Cluster ======================
+    echo "⏳ Initializing Redis Cluster (this may take a few seconds)..."
+
+    redis-cli --cluster create \
+      127.0.0.1:7000 127.0.0.1:7001 127.0.0.1:7002 \
+      127.0.0.1:7003 127.0.0.1:7004 127.0.0.1:7005 \
+      --cluster-replicas 1 --cluster-yes
+
+    echo "🎉 Redis Cluster Setup Completed!"
+    echo ""
+    echo "Cluster Nodes:"
+    redis-cli -p 7000 cluster nodes | head -n 10
+    echo ""
+    echo "Access from host:"
+    echo "redis-cli -p 7000 ping"
+  SHELL
+end
