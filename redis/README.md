@@ -4,9 +4,9 @@
 
 Here is the **most professional, clean, and maintainable** approach using Vagrant + shell provisioning + custom systemd services.
 
-### Final Recommended `Vagrantfile`
+### `Vagrantfile`
 
-Replace your existing `Vagrantfile` with this:
+Put the following in your `Vagrantfile`:
 
 ```ruby
 # -*- mode: ruby -*-
