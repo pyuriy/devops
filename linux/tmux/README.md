@@ -90,3 +90,34 @@ sudo dnf install -y tmux
 | `Prefix` then `]` | Paste buffer content into active pane |
 | `Prefix` then `:` | Open tmux command prompt |
 | `Prefix` then `?` | Show full list of keybindings (press `q` to exit) |
+
+
+### macOS & iTerm2 Pitfalls
+
+On macOS inside iTerm2, the key combination works almost identically to Linux—**you still use the physical `Control` (`⌃`) key, NOT the `Command` (`⌘`) key**.
+
+Because macOS uses `Command (⌘)` for system and app shortcuts (like `⌘ + C` to copy or `⌘ + W` to close a tab) and reserves `Control (⌃)` for terminal signals, iTerm2 passes `Control + b` directly through to tmux as the ASCII character `STX` (hex `0x02`).
+
+---
+
+### How to Execute It Step-by-Step
+
+Using splitting the screen vertically (`Prefix` then `%`) as an example:
+
+1. **Press and hold** the **`control` (`⌃`)** key on your Mac keyboard (located at the bottom-left corner, next to `fn` or `option`).
+2. **Tap** the **`b`** key while still holding `control`.
+3. **Release both keys completely.** (Nothing will visibly happen on your screen yet—tmux is now silently waiting for your next keystroke).
+4. **Press** the command key—for example, `Shift + 5` (to type `%`).
+* *Verification:* Your iTerm2 window immediately splits into left and right panes.
+
+
+
+---
+
+### Common macOS & iTerm2 Pitfalls
+
+| Issue | Cause & Fix |
+| --- | --- |
+| **Using `Command (⌘) + b` instead of `Control (⌃) + b**` | `Command + b` is intercepted by macOS/iTerm2 (or ignored) and never reaches tmux. Always use **`control` (`⌃`)**. |
+| **Arrow keys after `Prefix` switch macOS Spaces instead of tmux panes** | By default, macOS maps `Control + Left/Right Arrow` to Mission Control ("Move left/right a space"). If you hold `control` too long when pressing an arrow key, macOS intercepts it. Make sure you **release `control` after pressing `b**`, or disable those shortcuts in **System Settings → Keyboard → Keyboard Shortcuts → Mission Control**. |
+| **`Option` key shortcuts (like resizing panes) don't work** | If you use `Option` (`⌥`) in custom tmux bindings, open **iTerm2 Settings (`⌘ + ,`) → Profiles → Keys → General** and set **Left Option key** to **Esc+**. |
