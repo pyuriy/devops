@@ -1,4 +1,40 @@
-# tmux cheatsheet 
+# Basics of tmux
+
+`tmux` is included in the default **BaseOS / AppStream** repositories on Rocky Linux (versions 8, 9, and 10), so no extra repositories like EPEL are required.
+
+### Installation Steps
+
+1. **Install `tmux` using `dnf`:**
+```bash
+sudo dnf install -y tmux
+
+```
+
+
+*(Verification: Command finishes with `Complete!` and no dependency errors.)*
+2. **Verify the installation:**
+```bash
+tmux -V
+
+```
+
+
+*(Verification: Outputs the installed version, such as `tmux 3.2a` on Rocky 9 or `tmux 2.7` on Rocky 8.)*
+
+---
+
+### Offline / Minimal Repository Fallback
+
+If `dnf` fails because repository metadata is out of date or BaseOS/AppStream is disabled:
+
+```bash
+sudo dnf clean all
+sudo dnf makecache
+sudo dnf install -y tmux
+
+```
+
+## tmux cheatsheet 
 
 By default, all tmux commands start with the prefix key: **`Ctrl + b`** (written below as `Prefix`). Press `Ctrl + b`, release both keys, and then press the command key.
 
