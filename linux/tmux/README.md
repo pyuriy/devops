@@ -36,8 +36,6 @@ sudo dnf install -y tmux
 
 ## tmux cheatsheet 
 
-By default, all tmux commands start with the prefix key: **`Ctrl + b`** (written below as `Prefix`). Press `Ctrl + b`, release both keys, and then press the command key.
-
 ---
 
 ### Sessions
